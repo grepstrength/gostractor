@@ -61,3 +61,10 @@ The CSV output contains three columns:
 This is not perfect and not all strings found will be legitimate URLs. This tool is meant only to help speeed up the static analysis process of malware analysis. 
 
 Additionally, not all URLs will necessarily be malicious. Further analysis will be required upon finding valid URLs within this tool's output.
+
+## Future Plans
+There are several planned improvements:
+- GUI
+- Greater input file support (ELF, JS, VBA, etc.)
+- Greater output file support (JSON, TXT, etc.)
+- Improvements to detection logic
