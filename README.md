@@ -37,7 +37,6 @@ Download the latest release from [Releases](https://github.com/grepstrength/gost
 ```bash
 go install github.com/yourusername/gostractor@latest
 ```
-***Note: This should also be impossible if you're using an isolated VM.
 
 ## Usage
 ```cmd
@@ -61,4 +60,4 @@ The CSV output contains three columns:
 ## Limitations
 This is not perfect and not all strings found will be legitimate URLs. This tool is meant only to help speeed up the static analysis process of malware analysis. 
 
-Additionally, not all URLs will necessarily be malicious. Further analysis will be required upon finding valid URLs with this tool. 
+Additionally, not all URLs will necessarily be malicious. Further analysis will be required upon finding valid URLs within this tool's output.
