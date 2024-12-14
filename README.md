@@ -1,6 +1,8 @@
-# GoStractor
+# goStractor
 
-GoStractor is a command-line tool designed to automate the extraction of Indicators of Compromise (IOCs) from potentially malicious files. Built in Go, it provides fast and efficient static analysis capabilities for malware researchers and incident responders.
+goStractor is a command-line tool designed to automate the extraction of (mainly) network indicators of compromise (IOCs) from potentially malicious files. This was written in Go. It provides fast and efficient static analysis capabilities for malware researchers and incident responders.
+
+***Note: It's recommended to run this is an isolated sandbox VM to prevent accidential infection of your host machine. This sandbox VM shoud have no network route to your LAN or the internet.***
 
 ## Features
 
@@ -28,9 +30,14 @@ GoStractor is a command-line tool designed to automate the extraction of Indicat
 
 ## Installation
 
+***Recommended***
+Download the latest release from [Releases](https://github.com/grepstrength/gostractor/releases)
+
+***For Go developers only:***
 ```bash
 go install github.com/yourusername/gostractor@latest
 ```
+***Note: This should also be impossible if you're using an isolated VM.
 
 ## Usage
 ```cmd
@@ -50,3 +57,8 @@ The CSV output contains three columns:
 ```cmd
 .\gostractor.exe malware.exe results.csv
 ```
+
+## Limitations
+This is not perfect and not all strings found will be legitimate URLs. This tool is meant only to help speeed up the static analysis process of malware analysis. 
+
+Additionally, not all URLs will necessarily be malicious. Further analysis will be required upon finding valid URLs with this tool. 
