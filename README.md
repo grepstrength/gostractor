@@ -1,6 +1,6 @@
 # goStractor
 
-goStractor is a command-line tool designed to automate the extraction of (mainly) network indicators of compromise (IOCs) from potentially malicious files. This was written in Go. 
+goStractor is a command-line tool, written in Go, designed to automate the extraction of (mainly) network indicators of compromise (IOCs) from potentially malicious files. 
 
 ***Note: It's recommended to run this is an isolated sandbox VM to prevent accidential infection of your host machine. This sandbox VM shoud have no network route to your LAN or the internet.***
 
