@@ -89,7 +89,7 @@ func calculateSHA256(filename string) (string, error) {
 	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
-func extractIOCs(filename string, iocs *[]IOC) error { //Extracts IOCs from the file.
+func extractIOCs(filename string, iocs *[]IOC) error { //Extracts IOCs from the input file.
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -133,7 +133,7 @@ func extractIOCs(filename string, iocs *[]IOC) error { //Extracts IOCs from the 
 	return nil
 }
 
-func writeCSV(filename string, iocs []IOC) error {
+func writeCSV(filename string, iocs []IOC) error { //Writes the extracted IOCs to a CSV file.
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -143,12 +143,12 @@ func writeCSV(filename string, iocs []IOC) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	if err := writer.Write([]string{"IOC", "Type", "Offset"}); err != nil { //
+	if err := writer.Write([]string{"IOC", "Type", "Offset"}); err != nil {
 		return err
 	}
 
 	for _, ioc := range iocs {
-		if err := writer.Write([]string{ioc.Value, ioc.Type, fmt.Sprintf("%d", ioc.Offset)}); err != nil { //
+		if err := writer.Write([]string{ioc.Value, ioc.Type, fmt.Sprintf("%d", ioc.Offset)}); err != nil {
 			return err
 		}
 	}
