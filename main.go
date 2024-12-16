@@ -20,7 +20,7 @@ type IOC struct {
 }
 
 var (
-	validTLDs     = `(?:com|net|org|edu|gov|mil|biz|info|name|museum|coop|aero|[a-z]{2})` //included some valid TLDs
+	validTLDs     = `(?:com|net|org|edu|gov|mil|biz|ru|pk|kp|ir|xyz|top|online|ml|us|buzz|tk|cf|ga|zip|cn|mov|sbs|info|name|museum|coop|aero|[a-z]{2})` //included some valid TLDs
 	ipPattern     = regexp.MustCompile(`\b(?:\d{1,3}\.){3}\d{1,3}\b`)
 	domainPattern = regexp.MustCompile(`\b([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+` + validTLDs + `\b`) //domain pattern with valid TLDs and  hostname validation
 	urlPattern    = regexp.MustCompile(
