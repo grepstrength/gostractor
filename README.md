@@ -36,7 +36,7 @@ Download the latest release from: [Releases](https://github.com/grepstrength/gos
 
 ***For Go developers only:***
 ```bash
-go install github.com/yourusername/gostractor@latest
+go install github.com/grepstrength/gostractor@latest
 ```
 
 ## Usage
