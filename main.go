@@ -10,7 +10,13 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/widget"
+	"github.com/mholt/archiver/v3"
 )
 
 type IOC struct {
@@ -37,43 +43,105 @@ var (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: gostractor.exe <input_file> [output_file]")
-		os.Exit(1)
-	}
+	myApp := app.New()
+	window := myApp.NewWindow("GoStractor")
+	//these next two lines are the entry widgets. The first one is the input entry widget, and the second one is the output entry widget.
+	inputEntry := widget.NewEntry()
+	outputEntry := widget.NewEntry()
+	//this is the info label widget to explain that the app accepts any type and always saves in CSV format.
+	infoLabel := widget.NewLabel("GoStractor accepts any file type for IOC extraction, this includes non-standard defanged filetypes.\nResults will always be saved in CSV format.")
+	infoLabel.Wrapping = fyne.TextWrapWord
+	inputButton := widget.NewButton("Select File", func() { //this selects the input file (ANY SUPPORTED)
+		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
+			if err != nil {
+				dialog.ShowError(err, window)
+				return
+			}
+			if reader == nil {
+				return
+			}
+			inputEntry.SetText(reader.URI().Path())
+		}, window)
+		fd.Resize(fyne.NewSize(800, 800))
+		fd.Show()
+	})
 
-	inputFile := os.Args[1]
-	outputFile := ""
+	outputButton := widget.NewButton("Select Output", func() { //this selects the output file (CSV)
+		fd := dialog.NewFileSave(func(writer fyne.URIWriteCloser, err error) {
+			if err != nil {
+				dialog.ShowError(err, window)
+				return
+			}
+			if writer == nil {
+				return
+			}
+			outputEntry.SetText(writer.URI().Path())
+		}, window)
+		fd.Resize(fyne.NewSize(800, 800))
+		fd.Show()
+	})
 
-	if len(os.Args) > 2 {
-		outputFile = os.Args[2]
-	} else {
-		outputFile = strings.TrimSuffix(inputFile, filepath.Ext(inputFile)) + "_IOCs.csv" //outputs the file name with _IOCs.csv
+	// Process button
+	processButton := widget.NewButton("Extract IOCs", func() {
+		go processFile(inputEntry.Text, outputEntry.Text, window)
+		window.Resize(fyne.Size{Width: 500, Height: 500}) //this ensures the window is big enough to show the dialog
+
+	})
+	processButton.Importance = widget.HighImportance
+
+	// Layout
+	content := container.NewVBox(
+		infoLabel,
+		container.NewHBox(inputEntry, inputButton),
+		container.NewHBox(outputEntry, outputButton),
+		processButton,
+	)
+
+	window.SetContent(content)
+	window.Resize(fyne.NewSize(500, 200))
+	window.ShowAndRun()
+}
+func processFile(inputPath, outputPath string, window fyne.Window) {
+	//This processes .zip and .7z archives and extracts them to a temporary directory.
+	ext := filepath.Ext(inputPath)
+	if ext == ".zip" || ext == ".7z" {
+		tempDir, err := os.MkdirTemp("", "gostractor_*")
+		if err != nil {
+			dialog.ShowError(err, window)
+			return
+		}
+		defer os.RemoveAll(tempDir)
+
+		//This extracts the input file to a temporary directory.
+		err = archiver.Extract(inputPath, tempDir, "")
+		if err != nil {
+			dialog.ShowError(err, window)
+			return
+		}
+		inputPath = tempDir
 	}
 
 	iocs := []IOC{}
-
-	//Calculate SHA-256
-	hash, err := calculateSHA256(inputFile)
+	//these are self explanatory
+	hash, err := calculateSHA256(inputPath)
 	if err != nil {
-		fmt.Printf("Error calculating SHA-256: %v\n", err)
-		os.Exit(1)
+		dialog.ShowError(err, window)
+		return
 	}
-	iocs = append(iocs, IOC{Value: hash, Type: "SHA-256", Offset: 0}) //appends the SHA-256 hash to the iocs
+	iocs = append(iocs, IOC{Value: hash, Type: "SHA-256", Offset: 0})
 
-	if err := extractIOCs(inputFile, &iocs); err != nil { //Extracts IOCs from the file.
-		fmt.Printf("Error extracting IOCs: %v\n", err)
-		os.Exit(1)
-	}
-
-	if err := writeCSV(outputFile, iocs); err != nil { //Writes the IOCs to a CSV file.
-		fmt.Printf("Error writing CSV: %v\n", err)
-		os.Exit(1)
+	if err := extractIOCs(inputPath, &iocs); err != nil {
+		dialog.ShowError(err, window)
+		return
 	}
 
-	fmt.Printf("IOCs have been written to %s\n", outputFile)
+	if err := writeCSV(outputPath, iocs); err != nil {
+		dialog.ShowError(err, window)
+		return
+	}
+
+	dialog.ShowInformation("Success", "IOCs extracted successfully", window)
 }
-
 func calculateSHA256(filename string) (string, error) {
 	file, err := os.Open(filename)
 	if err != nil {
