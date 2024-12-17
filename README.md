@@ -4,14 +4,21 @@ goStractor is a command-line tool, written in Go, designed to automate the extra
 
 ***Note: It's recommended to run this is an isolated sandbox VM to prevent accidential infection of your host machine. This sandbox VM shoud have no network route to your LAN or the internet.***
 
-## Features
+## Updated to v1.0 beta - 17th December, 2024
+- Initial release with GUI interface
+- Universal file type support.
+- Archive handling (.zip, .7z) with password support.
 
-- Extracts multiple IOC types from mobile .apk's, DLLs, and Windows executables.
+## Full Features
+
+- Simple GUI. 
+- Extracts multiple IOC types from any input filetype.
 - Records the SHA-256 hash of the analyzed file.
 - Identifies network-related indicators of compromise (URLs, IPs, domains).
 - Detects strings referencing the modification of the Windows Registry. 
 - Outputs results in CSV format for easy analysis.
 - Cross-platform compatible (Windows x64-focused).
+- Archive handling (.zip, .7z) with password support.
 
 ## Supported IOC Types
 
@@ -40,11 +47,11 @@ go install github.com/grepstrength/gostractor@latest
 ```
 
 ## Usage
-```cmd
-.\gostractor.exe <input_file> [output_file]
-```
-
-If no output file is specified, results will be saved as <input_file>_IOCs.csv
+1. Launch gostractor.exe.
+2. Select the input file using the GUI.
+3. Choose the output location (optional)
+4. Click the "Extract IOCs" button. It takes approximately 1-5 seconds. 
+5. Results saved in CSV format. The ".csv" string must be typed or it will be an extensionless file. 
 
 Output Format
 The CSV output contains three columns:
@@ -65,7 +72,7 @@ Additionally, not all URLs will necessarily be malicious. Further analysis will 
 
 ## Future Plans
 There are several planned improvements:
-- GUI
-- Greater input file support (ELF, JS, VBA, etc.)
+- ~~GUI~~ (DONE)
+- ~~Greater input file support (ELF, JS, VBA, etc.)~~ (DONE)
 - Greater output file support (JSON, TXT, etc.)
-- Improvements to detection logic
+- Improvements to REGEX
